@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include "stack.h"
 
+#define FAIL 0;
+
 typedef struct _node *Node;
 
 typedef struct _node {
@@ -15,58 +17,87 @@ typedef struct _node {
     Node next;
 } node;
 
+typedef struct _stackrep {
+    Node head;
+} stackrep;
+
 static Node newNode(int num);
+static void clearNode(Node n);
 
 Stack newStack() {
-    Stack s = malloc(sizeof(Stack));
-    s = NULL;
+    Stack s = malloc(sizeof(stackrep));
+    s->head = NULL;
     return s;
 }
 
 void push(Stack s, int num) {
-    
-    Node n = newNode(num);
-    n->next = s;
-    s = n;
-}
-
-int pop(Stack s) {
-    if(s == NULL) {
-        printf("Invalid stack\n");
-        return 0;
-    }
-
-    Node del = s;
-    int val = del->val;
-    if(s->next == NULL) {
-        s = NULL;
-    } else {
-        s = s->next;
-    }
-    free(del);
-    return val;
-}
-
-void deleteStack(Stack s) {
-/*
     if(s == NULL) {
         printf("Invalid stack\n");
         return;
     }
 
-    if(s->front != NULL) {
-        Node del = s->front;
-        Node next = del->next;
-        for(; del != NULL; del = next, next = next->next)
-            free(del);
+    Node n = newNode(num);
+    // n->val = num; wtf is this u dumb mf
+    n->next = s->head;
+    s->head = n;
+}
+
+int pop(Stack s) {
+    if(s == NULL) {
+        printf("Invalid stack\n");
+        return FAIL;
+    } else if (s->head == NULL) {
+        printf("Can't pop from empty stack\n");
+        return FAIL;
+    }
+
+    Node del = s->head;
+    int val = del->val;
+    if(del->next == NULL) {
+        s->head = NULL;
+    } else {
+        s->head = del->next;
+    }
+
+    clearNode(del);
+
+    return val;
+}
+
+void deleteStack(Stack s) {
+    if(s == NULL) {
+        printf("Invalid stack\n");
+        return;
+    }
+
+    Node del;
+    while(s->head != NULL) {
+        del = s->head;
+        s->head = del->next;
+        clearNode(del);
     }
 
     free(s);
-    */
+    s->head = NULL;
+    s = NULL;
 }
 
 void showStack(Stack s) {
+    if(s == NULL) {
+        printf("Invalid stack\n");
+        return;
+    } else if(s->head == NULL) {
+        printf("Empty stack\n");
+        return;
+    }
 
+    printf("Stack contains:\n");
+    Node print = s->head;
+    while(print->next != NULL) {
+        printf("[%d] = ", print->val);
+        print = print->next;
+    }
+    printf("[%d]\n", print->val);
 }
 
 static Node newNode(int num) {
@@ -74,4 +105,11 @@ static Node newNode(int num) {
     n->val = num;
     n->next = NULL;
     return n;
-} 
+}
+
+static void clearNode(Node n) {
+    free(n);
+    n->val = 0;
+    n->next = NULL;
+    n = NULL;
+}

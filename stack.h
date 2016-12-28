@@ -14,7 +14,7 @@ new
 show
 */
 
-typedef struct _node *Stack;
+typedef struct _stackrep *Stack;
 
 Stack newStack();
 void push(Stack s, int num);
