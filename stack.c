@@ -93,11 +93,10 @@ void showStack(Stack s) {
 
     printf("Stack contains:\n");
     Node print = s->head;
-    while(print->next != NULL) {
-        printf("[%d] = ", print->val);
+    while(print != NULL) {
+        printf("[%d]\n", print->val);
         print = print->next;
     }
-    printf("[%d]\n", print->val);
 }
 
 static Node newNode(int num) {
@@ -112,4 +111,29 @@ static void clearNode(Node n) {
     n->val = 0;
     n->next = NULL;
     n = NULL;
+}
+
+
+Stack copyStack(Stack s) {
+
+    if(s == NULL) {
+        printf("Invalid stack\n");
+        return NULL;
+    }
+
+    Stack copy = newStack();
+    Node curr = s->head;
+    if(curr != NULL) {
+        Node nCopy = newNode(curr->val);
+        copy->head = nCopy;
+        while(curr->next != NULL) {
+            curr = curr->next;
+            nCopy->next = newNode(curr->val);
+            nCopy = nCopy->next;
+        }
+    } else {
+        copy->head = s->head;
+    }
+
+    return copy;
 }
